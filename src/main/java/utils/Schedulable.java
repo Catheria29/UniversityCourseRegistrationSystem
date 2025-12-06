@@ -1,0 +1,9 @@
+package utils;
+
+import model.TimeSlot;
+
+import java.util.List;
+
+public interface Schedulable {
+    List<TimeSlot> getMeetingTimes();
+}
