@@ -277,6 +277,7 @@ public class MainUI {
                 resultsText.append("Name: ").append(person.getName()).append("\n");
                 resultsText.append("Email: ").append(person.getEmail()).append("\n");
                 resultsText.append("Role: ").append(person.role()).append("\n");
+                person.displayProfile();
 
                 // Display additional profile info based on type
                 switch (person) {
