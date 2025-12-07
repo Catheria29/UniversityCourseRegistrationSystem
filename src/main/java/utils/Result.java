@@ -20,10 +20,6 @@ public final class Result<T> {
         return new Result<>(null, error);
     }
 
-    public boolean hasError() {
-        return error != null;
-    }
-
     public boolean isOk() {
         return error == null;
     }

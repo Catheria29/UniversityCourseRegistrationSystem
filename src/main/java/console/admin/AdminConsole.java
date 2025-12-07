@@ -76,9 +76,12 @@ public class AdminConsole {
         System.out.print("Capacity: ");
         int cap = Integer.parseInt(sc.nextLine());
 
-        Course course = courseRepository.findById(courseCode).get();
-        Instructor instructor = instructorRepository.findById(courseCode).get();
-
+        Course course = courseRepository.findById(courseCode).orElse(null);
+        Instructor instructor = instructorRepository.findById(courseCode).orElse(null);
+        if (instructor == null || course == null) {
+            System.out.println("Invalid course or instructor ID.");
+            return;
+        }
         var section = new Section(id, course, term, cap, instructor);
         var result = adminService.createSection(section);
         System.out.println(result.isOk() ? "Section created." : result.getError());

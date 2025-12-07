@@ -1,7 +1,6 @@
 package ui;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 
 /**
@@ -13,15 +12,11 @@ public class UITheme {
     // Primary Color Palette
     public static final Color PRIMARY_BLUE = new Color(66, 135, 245);      // Bright blue
     public static final Color SECONDARY_PURPLE = new Color(142, 68, 173);   // Purple accent
-    public static final Color ACCENT_CYAN = new Color(52, 211, 153);        // Teal/Cyan
-    public static final Color DARK_BG = new Color(26, 32, 46);              // Dark navy
     public static final Color LIGHT_BG = new Color(240, 244, 250);          // Light blue-gray
     public static final Color WHITE = new Color(255, 255, 255);
     public static final Color TEXT_DARK = new Color(33, 41, 60);            // Dark text
-    public static final Color TEXT_LIGHT = new Color(200, 210, 226);        // Light text
     public static final Color SUCCESS_GREEN = new Color(34, 197, 94);       // Green
     public static final Color ERROR_RED = new Color(239, 68, 68);           // Red
-    public static final Color WARNING_YELLOW = new Color(251, 146, 60);     // Orange
 
     public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 24);
     public static final Font HEADING_FONT = new Font("Segoe UI", Font.BOLD, 16);
@@ -40,9 +35,9 @@ public class UITheme {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 if (getModel().isPressed()) {
-                    g2.setColor(darken(bgColor, 0.2f));
+                    g2.setColor(darken(bgColor));
                 } else if (getModel().isArmed() || getModel().isRollover()) {
-                    g2.setColor(lighten(bgColor, 0.1f));
+                    g2.setColor(lighten(bgColor));
                 } else {
                     g2.setColor(bgColor);
                 }
@@ -144,15 +139,6 @@ public class UITheme {
         return field;
     }
 
-    /**
-     * Create a styled label
-     */
-    public static JLabel createStyledLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(REGULAR_FONT);
-        label.setForeground(TEXT_DARK);
-        return label;
-    }
 
     /**
      * Create a styled heading label
@@ -165,46 +151,22 @@ public class UITheme {
     }
 
     /**
-     * Create a button panel with proper spacing
-     */
-    public static JPanel createButtonPanel(JButton... buttons) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        panel.setBackground(LIGHT_BG);
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-
-        for (JButton btn : buttons) {
-            panel.add(btn);
-        }
-        return panel;
-    }
-
-    /**
-     * Create a content panel with padding
-     */
-    public static JPanel createContentPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(WHITE);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        return panel;
-    }
-
-    /**
      * Lighten a color
      */
-    private static Color lighten(Color color, float factor) {
-        int r = Math.min((int) (color.getRed() + 255 * factor), 255);
-        int g = Math.min((int) (color.getGreen() + 255 * factor), 255);
-        int b = Math.min((int) (color.getBlue() + 255 * factor), 255);
+    private static Color lighten(Color color) {
+        int r = Math.min((int) (color.getRed() + 255 * (float) 0.1), 255);
+        int g = Math.min((int) (color.getGreen() + 255 * (float) 0.1), 255);
+        int b = Math.min((int) (color.getBlue() + 255 * (float) 0.1), 255);
         return new Color(r, g, b);
     }
 
     /**
      * Darken a color
      */
-    private static Color darken(Color color, float factor) {
-        int r = Math.max((int) (color.getRed() * (1 - factor)), 0);
-        int g = Math.max((int) (color.getGreen() * (1 - factor)), 0);
-        int b = Math.max((int) (color.getBlue() * (1 - factor)), 0);
+    private static Color darken(Color color) {
+        int r = Math.max((int) (color.getRed() * (1 - (float) 0.2)), 0);
+        int g = Math.max((int) (color.getGreen() * (1 - (float) 0.2)), 0);
+        int b = Math.max((int) (color.getBlue() * (1 - (float) 0.2)), 0);
         return new Color(r, g, b);
     }
 }

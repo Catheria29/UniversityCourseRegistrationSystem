@@ -4,7 +4,6 @@ import model.Admin;
 import model.Instructor;
 import model.Person;
 import model.Student;
-import repository.PersonRepository;
 import repository.Repository;
 import service.AdminService;
 import service.CatalogService;
@@ -13,6 +12,7 @@ import service.RegistrationService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 
 public class MainUI {
@@ -137,7 +137,7 @@ public class MainUI {
                 return;
             }
 
-            switch (role) {
+            switch (role != null ? role : "anonymous") {
                 case "Student":
                     Optional<Student> student = studentRepo.findById(id);
                     if (student.isPresent()) {
@@ -260,7 +260,7 @@ public class MainUI {
         }
 
         // Search in person repository
-        java.util.List<Person> results = personRepo.findAll().stream()
+        List<Person> results = personRepo.findAll().stream()
                 .filter(p -> p.matches(query))
                 .toList();
 
@@ -279,16 +279,17 @@ public class MainUI {
                 resultsText.append("Role: ").append(person.role()).append("\n");
 
                 // Display additional profile info based on type
-                if (person instanceof Student) {
-                    Student student = (Student) person;
-                    resultsText.append("Major: ").append(student.getMajor()).append("\n");
-                    resultsText.append("Current Enrollments: ").append(student.getCurrentEnrollments().size()).append("\n");
-                    resultsText.append("GPA: ").append(String.format("%.2f", calculateGPA(student))).append("\n");
-                } else if (person instanceof Instructor) {
-                    Instructor instructor = (Instructor) person;
-                    resultsText.append("Department: ").append(instructor.getDepartment()).append("\n");
-                } else if (person instanceof Admin) {
-                    resultsText.append("Admin Account\n");
+                switch (person) {
+                    case Student student -> {
+                        resultsText.append("Major: ").append(student.getMajor()).append("\n");
+                        resultsText.append("Current Enrollments: ").append(student.getCurrentEnrollments().size()).append("\n");
+                        resultsText.append("GPA: ").append(String.format("%.2f", calculateGPA(student))).append("\n");
+                    }
+                    case Instructor instructor ->
+                            resultsText.append("Department: ").append(instructor.getDepartment()).append("\n");
+                    case Admin ignored -> resultsText.append("Admin Account\n");
+                    default -> {
+                    }
                 }
             }
             resultsArea.setText(resultsText.toString());

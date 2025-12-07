@@ -8,6 +8,7 @@ import service.tuition.OutOfStateTuitionCalculator;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 
 public class DataSeeder {
 
@@ -22,12 +23,12 @@ public class DataSeeder {
         // 1. Courses
         // -----------------------------
         Course cs101 = new Course("CS101", "Intro to CS", 3);
-        Course cs102 = new Course("CS102", "Data Structures", 3, Arrays.asList("CS101"));
-        Course cs201 = new Course("CS201", "Algorithms", 3, Arrays.asList("CS102"));
-        Course cs202 = new Course("CS202", "Operating Systems", 3, Arrays.asList("CS102"));
-        Course cs301 = new Course("CS301", "Machine Learning", 3, Arrays.asList("CS201"));
+        Course cs102 = new Course("CS102", "Data Structures", 3, List.of("CS101"));
+        Course cs201 = new Course("CS201", "Algorithms", 3, List.of("CS102"));
+        Course cs202 = new Course("CS202", "Operating Systems", 3, List.of("CS102"));
+        Course cs301 = new Course("CS301", "Machine Learning", 3, List.of("CS201"));
         Course math101 = new Course("MATH101", "Calculus I", 4);
-        Course math102 = new Course("MATH102", "Calculus II", 4, Arrays.asList("MATH101"));
+        Course math102 = new Course("MATH102", "Calculus II", 4, List.of("MATH101"));
         Course phys101 = new Course("PHYS101", "Physics I", 4);
 
         Arrays.asList(cs101, cs102, cs201, cs202, cs301, math101, math102, phys101)
