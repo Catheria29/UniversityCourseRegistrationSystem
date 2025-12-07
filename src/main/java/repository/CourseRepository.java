@@ -18,9 +18,28 @@ public class CourseRepository implements Repository<Course, String> {
         };
     }
 
-    @Override public Optional<Course> findById(String s) { return repository.findById(s); }
-    @Override public List<Course> findAll() { return repository.findAll(); }
-    @Override public PagedList<Course> findAll(int page, int pageSize) { return repository.findAll(page, pageSize); }
-    @Override public Course save(Course entity) { return repository.save(entity); }
-    @Override public void deleteById(String s) { repository.deleteById(s); }
+    @Override
+    public Optional<Course> findById(String s) {
+        return repository.findById(s);
+    }
+
+    @Override
+    public List<Course> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public PagedList<Course> findAll(int page, int pageSize) {
+        return repository.findAll(page, pageSize);
+    }
+
+    @Override
+    public Course save(Course entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public void deleteById(String s) {
+        repository.deleteById(s);
+    }
 }

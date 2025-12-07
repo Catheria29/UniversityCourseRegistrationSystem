@@ -51,7 +51,6 @@ public class LoginConsole {
         var scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("soimeg");
             System.out.println("===== University System =====");
             System.out.println("1. Login as Student");
             System.out.println("2. Login as Instructor");
@@ -63,7 +62,9 @@ public class LoginConsole {
                 case "1" -> loginStudent(scanner);
                 case "2" -> loginInstructor(scanner);
                 case "3" -> loginAdmin(scanner);
-                case "0" -> { return; }
+                case "0" -> {
+                    return;
+                }
                 default -> System.out.println("Invalid option.");
             }
         }

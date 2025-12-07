@@ -3,7 +3,6 @@ package utils;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PagedList<T> {
@@ -26,9 +25,5 @@ public class PagedList<T> {
         int fromIndex = Math.min(page * pageSize, items.size());
         int toIndex = Math.min(fromIndex + pageSize, items.size());
         return items.subList(fromIndex, toIndex);
-    }
-
-    public int totalPages() {
-        return (int) Math.ceil((double) totalCount / pageSize);
     }
 }

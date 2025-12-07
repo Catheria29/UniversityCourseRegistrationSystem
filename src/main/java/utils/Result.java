@@ -1,7 +1,6 @@
 package utils;
-import lombok.Getter;
 
-import java.util.function.Function;
+import lombok.Getter;
 
 @Getter
 public final class Result<T> {
@@ -27,16 +26,6 @@ public final class Result<T> {
 
     public boolean isOk() {
         return error == null;
-    }
-
-    public <U> Result<U> map(Function<T, U> mapper) {
-        if (hasError()) return fail(error);
-        return ok(mapper.apply(value));
-    }
-
-    public <U> Result<U> flatMap(Function<T, Result<U>> mapper) {
-        if (hasError()) return fail(error);
-        return mapper.apply(value);
     }
 }
 

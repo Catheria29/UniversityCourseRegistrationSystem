@@ -4,7 +4,6 @@ import model.AdminActionLog;
 import model.Course;
 import model.Section;
 import model.Instructor;
-import repository.InstructorRepository;
 import repository.Repository;
 import service.AdminService;
 import service.CatalogService;
@@ -34,25 +33,42 @@ public class AdminUI extends JFrame {
 
     public void showUI() {
         setTitle("Admin Dashboard");
-        setSize(500, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(0, 1, 5, 5));
+        setSize(700, 600);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        JButton createCourseBtn = new JButton("Create Course");
-        JButton createSectionBtn = new JButton("Create Section");
-        JButton assignInstructorBtn = new JButton("Assign Instructor");
-        JButton overrideCapacityBtn = new JButton("Override Capacity");
-        JButton overridePrereqBtn = new JButton("Override Prerequisite");
-        JButton viewLogsBtn = new JButton("View Admin Logs");
-        JButton backBtn = new JButton("Back"); // <--- new back button
+        // Header panel with gradient
+        JPanel headerPanel = UITheme.createHeaderPanel("Admin Dashboard");
+        add(headerPanel, BorderLayout.NORTH);
 
-        add(createCourseBtn);
-        add(createSectionBtn);
-        add(assignInstructorBtn);
-        add(overrideCapacityBtn);
-        add(overridePrereqBtn);
-        add(viewLogsBtn);
-        add(backBtn); // <--- add to layout
+        // Button panel with modern styling
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 2, 15, 15));
+        buttonPanel.setBackground(UITheme.LIGHT_BG);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JButton createCourseBtn = UITheme.createPrimaryButton("Create Course");
+        JButton createSectionBtn = UITheme.createPrimaryButton("Create Section");
+        JButton assignInstructorBtn = UITheme.createSecondaryButton("Assign Instructor");
+        JButton overrideCapacityBtn = UITheme.createSecondaryButton("Override Capacity");
+        JButton overridePrereqBtn = UITheme.createSecondaryButton("Override Prerequisite");
+        JButton viewLogsBtn = UITheme.createSuccessButton("View Admin Logs");
+        JButton backBtn = UITheme.createDangerButton("Back");
+
+        // Spacer to fill grid
+        JPanel spacer = new JPanel();
+        spacer.setBackground(UITheme.LIGHT_BG);
+
+        buttonPanel.add(createCourseBtn);
+        buttonPanel.add(createSectionBtn);
+        buttonPanel.add(assignInstructorBtn);
+        buttonPanel.add(overrideCapacityBtn);
+        buttonPanel.add(overridePrereqBtn);
+        buttonPanel.add(viewLogsBtn);
+        buttonPanel.add(backBtn);
+        buttonPanel.add(spacer);
+
+        add(buttonPanel, BorderLayout.CENTER);
 
         // --- Actions ---
         createCourseBtn.addActionListener(e -> createCourse());
@@ -74,43 +90,54 @@ public class AdminUI extends JFrame {
 
     private void createCourse() {
         String code = JOptionPane.showInputDialog(this, "Enter course code:");
+        if (code == null || code.isBlank()) return;
         String title = JOptionPane.showInputDialog(this, "Enter course title:");
-        int credits = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter credits:"));
-        Course course = new Course(code, title, credits);
+        if (title == null || title.isBlank()) return;
 
+        int credits;
+        try {
+            credits = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter credits:"));
+        } catch (NumberFormatException e) {
+            showError("Invalid credits entered");
+            return;
+        }
+
+        Course course = new Course(code, title, credits);
         Result<Course> result = adminService.createCourse(course);
         showResult(result);
     }
 
     private void createSection() {
         String courseCode = JOptionPane.showInputDialog(this, "Enter course code:");
+        if (courseCode == null || courseCode.isBlank()) return;
+
         Optional<Course> courseOpt = catalogService.getCourseById(courseCode);
 
         if (courseOpt.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Course not found: " + courseCode,
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Course not found: " + courseCode);
             return;
         }
 
         String instructorId = JOptionPane.showInputDialog(this, "Enter instructor id:");
+        if (instructorId == null || instructorId.isBlank()) return;
+
         Optional<Instructor> instructorOpt = instructorRepo.findById(instructorId);
 
         if (instructorOpt.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Instructor not found: " + courseCode,
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Instructor not found: " + instructorId);
             return;
         }
 
         Course course = courseOpt.get();
 
         String term = JOptionPane.showInputDialog(this, "Enter term (e.g., Fall2025):");
+        if (term == null || term.isBlank()) return;
 
         int capacity;
         try {
             capacity = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter capacity:"));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid capacity entered",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Invalid capacity entered");
             return;
         }
 
@@ -123,7 +150,10 @@ public class AdminUI extends JFrame {
 
     private void assignInstructor() {
         String sectionId = JOptionPane.showInputDialog(this, "Enter section ID:");
+        if (sectionId == null || sectionId.isBlank()) return;
+
         String instructorId = JOptionPane.showInputDialog(this, "Enter instructor ID:");
+        if (instructorId == null || instructorId.isBlank()) return;
 
         Result<Void> result = adminService.assignInstructor(sectionId, instructorId);
         showResult(result);
@@ -131,8 +161,18 @@ public class AdminUI extends JFrame {
 
     private void overrideCapacity() {
         String sectionId = JOptionPane.showInputDialog(this, "Enter section ID:");
-        int newCapacity = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter new capacity:"));
+        if (sectionId == null || sectionId.isBlank()) return;
+
+        int newCapacity;
+        try {
+            newCapacity = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter new capacity:"));
+        } catch (NumberFormatException e) {
+            showError("Invalid capacity entered");
+            return;
+        }
+
         String reason = JOptionPane.showInputDialog(this, "Reason for override:");
+        if (reason == null || reason.isBlank()) reason = "No reason provided";
 
         Result<Void> result = adminService.overrideCapacity(sectionId, newCapacity, reason);
         showResult(result);
@@ -140,43 +180,72 @@ public class AdminUI extends JFrame {
 
     private void overridePrerequisite() {
         String studentId = JOptionPane.showInputDialog(this, "Enter student ID:");
+        if (studentId == null || studentId.isBlank()) return;
+
         String courseCode = JOptionPane.showInputDialog(this, "Enter course code:");
+        if (courseCode == null || courseCode.isBlank()) return;
+
         String reason = JOptionPane.showInputDialog(this, "Reason for override:");
+        if (reason == null || reason.isBlank()) reason = "No reason provided";
 
         Result<Void> result = adminService.overridePrerequisite(studentId, courseCode, reason);
         showResult(result);
     }
 
     private void viewLogs() {
-        // 1. Fetch the list of logs from the AdminService
+        // Fetch and display logs
         List<AdminActionLog> logs = adminService.getLogs();
 
-        // 2. Convert the logs list to a readable string
-        StringBuilder logText = new StringBuilder();
-        for (AdminActionLog log : logs) {
-            logText.append("ID: ").append(log.getId())
-                    .append(", Admin: ").append(log.getAdminId())
-                    .append(", Action: ").append(log.getAction())
-                    .append(", Type: ").append(log.getActionType())
-                    .append(", Reason: ").append(log.getReason() != null ? log.getReason() : "-")
-                    .append("\n");
+        // Create a more visually appealing logs display
+        JFrame logsFrame = new JFrame("Admin Logs");
+        logsFrame.setSize(800, 500);
+        logsFrame.setLayout(new BorderLayout());
+
+        // Header
+        JPanel headerPanel = UITheme.createHeaderPanel("Admin Action Logs");
+        logsFrame.add(headerPanel, BorderLayout.NORTH);
+
+        // Logs text area
+        JTextArea textArea = new JTextArea();
+        textArea.setFont(UITheme.REGULAR_FONT);
+        textArea.setEditable(false);
+        textArea.setBackground(UITheme.WHITE);
+        textArea.setForeground(UITheme.TEXT_DARK);
+        textArea.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+
+        if (logs.isEmpty()) {
+            textArea.setText("No admin logs available.");
+        } else {
+            StringBuilder logText = new StringBuilder();
+            for (AdminActionLog log : logs) {
+                logText.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                logText.append("ID: ").append(log.getId()).append("\n");
+                logText.append("Admin: ").append(log.getAdminId()).append("\n");
+                logText.append("Action: ").append(log.getAction()).append("\n");
+                logText.append("Type: ").append(log.getActionType()).append("\n");
+                logText.append("Reason: ").append(log.getReason() != null ? log.getReason() : "-").append("\n");
+            }
+            textArea.setText(logText.toString());
         }
 
-        // 3. Show the logs in a message dialog
-        JOptionPane.showMessageDialog(
-                this,
-                !logText.isEmpty() ? logText.toString() : "No logs available.",
-                "Admin Logs",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        logsFrame.add(scrollPane, BorderLayout.CENTER);
 
+        logsFrame.setLocationRelativeTo(this);
+        logsFrame.setVisible(true);
+    }
 
     private void showResult(Result<?> result) {
         if (result.isOk()) {
-            JOptionPane.showMessageDialog(this, "Success!");
+            JOptionPane.showMessageDialog(this, "✓ Operation completed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "Error: " + result.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+            showError(result.getError());
         }
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, "Error: " + message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

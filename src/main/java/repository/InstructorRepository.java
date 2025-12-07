@@ -13,7 +13,7 @@ public class InstructorRepository implements Repository<Instructor, String> {
         repository = new InMemoryRepository<>() {
             @Override
             protected String getId(Instructor entity) {
-                if (entity.getId() == null){
+                if (entity.getId() == null) {
                     throw new IllegalArgumentException("Entity ID cannot be null");
                 }
                 return entity.getId();

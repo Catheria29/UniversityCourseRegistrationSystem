@@ -16,7 +16,7 @@ public class AdminConsole {
     private final Repository<Course, String> courseRepository;
     private final Repository<Instructor, String> instructorRepository;
 
-    public AdminConsole(Admin admin, AdminService adminService, Repository<Course, String> courseRepository, Repository<Instructor, String> instructorRepository ) {
+    public AdminConsole(Admin admin, AdminService adminService, Repository<Course, String> courseRepository, Repository<Instructor, String> instructorRepository) {
         this.admin = admin;
         this.adminService = adminService;
         this.courseRepository = courseRepository;
@@ -44,7 +44,9 @@ public class AdminConsole {
                 case "4" -> overrideCapacity(sc);
                 case "5" -> overridePrereq(sc);
                 case "6" -> viewLogs();
-                case "0" -> { return; }
+                case "0" -> {
+                    return;
+                }
                 default -> System.out.println("Invalid option.");
             }
         }

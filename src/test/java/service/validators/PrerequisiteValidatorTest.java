@@ -15,7 +15,6 @@ class PrerequisiteValidatorTest {
     private Student student;
     private Section targetSection;
     private Course prereqCourse;
-    private Course mainCourse;
 
     @BeforeEach
     void setUp() {
@@ -28,7 +27,7 @@ class PrerequisiteValidatorTest {
         prereqCourse = new Course("CS101", "Intro to CS", 3);
 
         // Target course with prerequisite
-        mainCourse = new Course("CS102", "Data Structures", 3);
+        Course mainCourse = new Course("CS102", "Data Structures", 3);
         mainCourse.setPrerequisites(List.of(prereqCourse.getCode()));
         Instructor instructor = new Instructor("I1", "Dr. Smith", "smith@mail.com", "CS");
         targetSection = new Section("SEC1", mainCourse, "Fall2025", 30, instructor);

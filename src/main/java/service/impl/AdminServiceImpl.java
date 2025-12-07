@@ -66,6 +66,7 @@ public class AdminServiceImpl implements AdminService {
 
         Section section = sectionOpt.get();
         Instructor instructor = instOpt.get();
+        instructor.addAssignedSectionId(sectionId);
 
         section.setInstructor(instructor);
         sectionRepo.save(section);

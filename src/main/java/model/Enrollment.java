@@ -7,17 +7,15 @@ import lombok.NonNull;
 public class Enrollment {
     private String id;
 
-    @NonNull private transient Student student;
-    @NonNull private Section section;
+    @NonNull
+    private transient Student student;
+    @NonNull
+    private Section section;
 
-    private Status status = Status.ENROLLED;
+    private Status status;
     private Grade grade;
 
-    public enum Status { ENROLLED, DROPPED, WAITLISTED }
-
-    public String getCourseCode() {
-        return section.getCourse().getCode();
-    }
+    public enum Status {ENROLLED, DROPPED, WAITLISTED}
 
     public Enrollment(@NonNull Student student, @NonNull Section section, Status status) {
         this.id = java.util.UUID.randomUUID().toString();

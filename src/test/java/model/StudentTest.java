@@ -87,8 +87,8 @@ class StudentTest {
         student.enroll(sectionA, enrollmentRepo, capacityValidator, prereqValidator, conflictChecker);
         student.postGrade(sectionA, Grade.A);
         assertEquals(1, student.getTranscript().size());
-        assertEquals(Grade.A, student.getTranscript().get(0).getGrade());
-        assertEquals(Grade.A, student.getCurrentEnrollments().get(0).getGrade());
+        assertEquals(Grade.A, student.getTranscript().getFirst().getGrade());
+        assertEquals(Grade.A, student.getCurrentEnrollments().getFirst().getGrade());
     }
 
     @Test

@@ -25,11 +25,17 @@ public class Main {
         Repository<Admin, String> adminRepo = new AdminRepository();
         Repository<AdminActionLog, String> adminLogRepo = new AdminActionLogRepository();
         Repository<Enrollment, String> enrollmentRepo = new EnrollmentRepository();
+        Repository<Person, String> personRepo = new PersonRepository();
 
         // -----------------------------
         // 2. Seed data
         // -----------------------------
         DataSeeder.seed(studentRepo, instructorRepo, courseRepo, sectionRepo, adminRepo);
+
+        // Populate PersonRepository with all users
+        studentRepo.findAll().forEach(personRepo::save);
+        instructorRepo.findAll().forEach(personRepo::save);
+        adminRepo.findAll().forEach(personRepo::save);
 
         // -----------------------------
         // 3. Services
@@ -38,7 +44,7 @@ public class Main {
                 courseRepo, sectionRepo, instructorRepo, adminLogRepo, "A1");
 
         RegistrationService registrationService = new RegistrationServiceImpl(
-                studentRepo, sectionRepo, enrollmentRepo,new CapacityValidator(),
+                studentRepo, sectionRepo, enrollmentRepo, new CapacityValidator(),
                 new PrerequisiteValidator(),
                 new ScheduleConflictChecker()
         );
@@ -47,7 +53,7 @@ public class Main {
                 studentRepo, sectionRepo, instructorRepo);
 
         CatalogService catalogService = new CatalogServiceImpl(
-                courseRepo, sectionRepo, instructorRepo);
+                courseRepo, sectionRepo);
 
         // -----------------------------
         // 4. Assign instructors to all sections
@@ -87,14 +93,13 @@ public class Main {
         int i = 0;
         for (Student s : students) {
             for (Enrollment e : s.getCurrentEnrollments()) {
-                if(i%2 == 0){
+                if (i % 2 == 0) {
                     i++;
                     continue;
                 }
                 if (e.getGrade() == null) {
                     System.out.println("Posting grade A for " + s.getName() + " in " +
                             e.getSection().getCourse().getCode());
-//                    gradingService.postGrade(e.getSection().getId(), e.getId(), s.getId(), Grade.A);
                 }
             }
         }
@@ -104,9 +109,7 @@ public class Main {
         // -----------------------------
         for (Student s : students) {
             System.out.println("--- Transcript for " + s.getName() + " ---");
-            s.getTranscript().forEach(t -> {
-                System.out.println(t.getSection().getCourse().getCode() + " → " + t.getGrade());
-            });
+            s.getTranscript().forEach(t -> System.out.println(t.getSection().getCourse().getCode() + " → " + t.getGrade()));
             System.out.println("Tuition: $" + s.calculateTuition());
             System.out.println();
         }
@@ -114,16 +117,16 @@ public class Main {
         // -----------------------------
         // 8. Launch console
         // -----------------------------
+        //
+        // This launches the Console. I commented it out for now, since I'm now using the UI.
 //        new MainConsole(
 //                studentRepo, instructorRepo, adminRepo,
 //                registrationService, catalogService, gradingService, adminService,
 //                sectionRepo, courseRepo
 //        ).start();
 
-
-        SwingUtilities.invokeLater(() -> {
-            new MainUI(studentRepo, instructorRepo, adminRepo,
-                    registrationService, catalogService, gradingService, adminService).start();
-        });
+// This launches the UI.
+        SwingUtilities.invokeLater(() -> new MainUI(studentRepo, instructorRepo, adminRepo, personRepo,
+                registrationService, catalogService, gradingService, adminService).start());
     }
 }

@@ -12,14 +12,18 @@ import java.time.LocalTime;
 @Getter
 @AllArgsConstructor
 public class TimeSlot implements Comparable<TimeSlot> {
-    @NonNull private DayOfWeek day;
-    @NonNull private LocalTime startTime;
-    @NonNull private LocalTime endTime;
-    @NonNull private String room;
+    @NonNull
+    private DayOfWeek day;
+    @NonNull
+    private LocalTime startTime;
+    @NonNull
+    private LocalTime endTime;
+    @NonNull
+    private String room;
 
 
     @Override
-    public int compareTo(TimeSlot o) {
+    public int compareTo(@NonNull TimeSlot o) {
         int cmp = day.compareTo(o.day);
         if (cmp != 0) return cmp;
         return startTime.compareTo(o.startTime);

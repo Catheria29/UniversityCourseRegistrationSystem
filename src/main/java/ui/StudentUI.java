@@ -3,11 +3,13 @@ package ui;
 import model.Enrollment;
 import model.Section;
 import model.Student;
+import model.TranscriptEntry;
 import service.CatalogService;
 import service.RegistrationService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 
@@ -32,15 +34,23 @@ public class StudentUI {
     public void showUI() {
         JFrame frame = new JFrame("Student Portal - " + student.getName());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1000, 700);
         frame.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 5, 10, 10));
-        JButton catalogBtn = new JButton("View Catalog");
-        JButton scheduleBtn = new JButton("My Schedule");
-        JButton enrollBtn = new JButton("Add / Drop Section");
-        JButton transcriptBtn = new JButton("Transcript & GPA");
-        JButton backBtn = new JButton("Back");
+        // Header panel with gradient
+        JPanel headerPanel = UITheme.createHeaderPanel("Student Portal");
+        frame.add(headerPanel, BorderLayout.NORTH);
+
+        // Button panel with modern styling
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBackground(UITheme.LIGHT_BG);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JButton catalogBtn = UITheme.createPrimaryButton("View Catalog");
+        JButton scheduleBtn = UITheme.createSecondaryButton("My Schedule");
+        JButton enrollBtn = UITheme.createSuccessButton("Add / Drop");
+        JButton transcriptBtn = UITheme.createPrimaryButton("Transcript & GPA");
+        JButton backBtn = UITheme.createDangerButton("Back");
 
         buttonPanel.add(catalogBtn);
         buttonPanel.add(scheduleBtn);
@@ -51,6 +61,8 @@ public class StudentUI {
         frame.add(buttonPanel, BorderLayout.NORTH);
 
         JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(UITheme.WHITE);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(contentPanel, BorderLayout.CENTER);
 
         // Button actions
@@ -91,7 +103,7 @@ public class StudentUI {
             }
         });
 
-        JTable table = new JTable(model);
+        JTable table = styleTable(new JTable(model));
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
@@ -130,7 +142,7 @@ public class StudentUI {
             });
         }
 
-        JTable table = new JTable(model);
+        JTable table = styleTable(new JTable(model));
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
@@ -139,33 +151,72 @@ public class StudentUI {
     private void showEnrollDrop(JPanel panel) {
         panel.removeAll();
 
-        JPanel inputPanel = new JPanel(new FlowLayout());
-        JLabel label = new JLabel("Section ID:");
-        JTextField sectionField = new JTextField(10);
-        JButton addBtn = new JButton("Add");
-        JButton dropBtn = new JButton("Drop");
-        JLabel statusLabel = new JLabel();
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        inputPanel.setBackground(UITheme.LIGHT_BG);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel label = UITheme.createHeadingLabel("Enter Section ID:");
+        JTextField sectionField = UITheme.createStyledTextField(15);
+        sectionField.setMaximumSize(new Dimension(300, 40));
+
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonRow.setBackground(UITheme.LIGHT_BG);
+        JButton addBtn = UITheme.createSuccessButton("Add Section");
+        JButton dropBtn = UITheme.createDangerButton("Drop Section");
+        buttonRow.add(addBtn);
+        buttonRow.add(dropBtn);
+
+        JLabel statusLabel = new JLabel("");
+        statusLabel.setFont(UITheme.REGULAR_FONT);
+        statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         inputPanel.add(label);
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(sectionField);
-        inputPanel.add(addBtn);
-        inputPanel.add(dropBtn);
+        inputPanel.add(Box.createVerticalStrut(15));
+        inputPanel.add(buttonRow);
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(statusLabel);
 
         panel.add(inputPanel, BorderLayout.NORTH);
 
         addBtn.addActionListener(e -> {
             String secId = sectionField.getText().trim();
-            String error = registrationService.enroll(student.getId(), secId).getError();
-            statusLabel.setText(error != null ? "Error: " + error : "Enrolled successfully!");
-            showSchedule(panel); // refresh
+            if (secId.isEmpty()) {
+                statusLabel.setText("Please enter a section ID");
+                statusLabel.setForeground(UITheme.ERROR_RED);
+                return;
+            }
+            var result = registrationService.enroll(student.getId(), secId);
+            if (result.getError() != null) {
+                statusLabel.setText("Error: " + result.getError());
+                statusLabel.setForeground(UITheme.ERROR_RED);
+            } else {
+                statusLabel.setText("✓ Enrolled successfully!");
+                statusLabel.setForeground(UITheme.SUCCESS_GREEN);
+                sectionField.setText("");
+                showSchedule(panel); // refresh
+            }
         });
 
         dropBtn.addActionListener(e -> {
             String secId = sectionField.getText().trim();
-            String error = registrationService.drop(student.getId(), secId).getError();
-            statusLabel.setText(error != null ? "Error: " + error : "Dropped successfully!");
-            showSchedule(panel); // refresh
+            if (secId.isEmpty()) {
+                statusLabel.setText("Please enter a section ID");
+                statusLabel.setForeground(UITheme.ERROR_RED);
+                return;
+            }
+            var result = registrationService.drop(student.getId(), secId);
+            if (result.getError() != null) {
+                statusLabel.setText("Error: " + result.getError());
+                statusLabel.setForeground(UITheme.ERROR_RED);
+            } else {
+                statusLabel.setText("✓ Dropped successfully!");
+                statusLabel.setForeground(UITheme.SUCCESS_GREEN);
+                sectionField.setText("");
+                showSchedule(panel); // refresh
+            }
         });
 
         panel.revalidate();
@@ -178,26 +229,45 @@ public class StudentUI {
         String[] columns = {"Course", "Section ID", "Term", "Grade"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        student.getTranscript().forEach(te -> {
+        for (TranscriptEntry te : student.getTranscript()) {
             model.addRow(new Object[]{
                     te.getSection().getCourse().getCode(),
                     te.getSection().getId(),
                     te.getSection().getTerm(),
                     te.getGrade() != null ? te.getGrade().name() : "-"
             });
-        });
+        }
 
-        JTable table = new JTable(model);
-        JLabel gpaLabel = new JLabel("GPA: " + calculateGPA());
+        JTable table = styleTable(new JTable(model));
+        JScrollPane scrollPane = new JScrollPane(table);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(UITheme.LIGHT_BG);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JLabel gpaLabel = UITheme.createHeadingLabel("GPA: " + String.format("%.2f", calculateGPA()));
         bottomPanel.add(gpaLabel);
 
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.SOUTH);
 
         panel.revalidate();
         panel.repaint();
+    }
+
+    private JTable styleTable(JTable table) {
+        table.setFont(UITheme.REGULAR_FONT);
+        table.setRowHeight(25);
+        table.setGridColor(new Color(220, 220, 220));
+        table.setSelectionBackground(UITheme.PRIMARY_BLUE);
+        table.setSelectionForeground(UITheme.WHITE);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(UITheme.PRIMARY_BLUE);
+        header.setForeground(UITheme.WHITE);
+        header.setFont(UITheme.BUTTON_FONT);
+
+        return table;
     }
 
     private double calculateGPA() {

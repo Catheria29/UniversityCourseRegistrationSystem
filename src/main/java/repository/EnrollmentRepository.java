@@ -13,7 +13,7 @@ public class EnrollmentRepository implements Repository<Enrollment, String> {
         repository = new InMemoryRepository<>() {
             @Override
             protected String getId(Enrollment entity) {
-                if (entity.getId() == null){
+                if (entity.getId() == null) {
                     throw new IllegalArgumentException("Entity ID cannot be null");
                 }
                 return entity.getId();
@@ -23,9 +23,28 @@ public class EnrollmentRepository implements Repository<Enrollment, String> {
         };
     }
 
-    @Override public Optional<Enrollment> findById(String s) { return repository.findById(s); }
-    @Override public List<Enrollment> findAll() { return repository.findAll(); }
-    @Override public PagedList<Enrollment> findAll(int page, int pageSize) { return repository.findAll(page, pageSize); }
-    @Override public Enrollment save(Enrollment entity) { return repository.save(entity); }
-    @Override public void deleteById(String s) { repository.deleteById(s); }
+    @Override
+    public Optional<Enrollment> findById(String s) {
+        return repository.findById(s);
+    }
+
+    @Override
+    public List<Enrollment> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public PagedList<Enrollment> findAll(int page, int pageSize) {
+        return repository.findAll(page, pageSize);
+    }
+
+    @Override
+    public Enrollment save(Enrollment entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public void deleteById(String s) {
+        repository.deleteById(s);
+    }
 }

@@ -20,10 +20,29 @@ public class SectionRepository implements Repository<Section, String> {
         };
     }
 
-    @Override public Optional<Section> findById(String s) { return repository.findById(s); }
-    @Override public List<Section> findAll() { return repository.findAll(); }
-    @Override public PagedList<Section> findAll(int page, int pageSize) { return repository.findAll(page, pageSize); }
-    @Override public Section save(Section entity) { return repository.save(entity); }
-    @Override public void deleteById(String s) { repository.deleteById(s); }
+    @Override
+    public Optional<Section> findById(String s) {
+        return repository.findById(s);
+    }
+
+    @Override
+    public List<Section> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public PagedList<Section> findAll(int page, int pageSize) {
+        return repository.findAll(page, pageSize);
+    }
+
+    @Override
+    public Section save(Section entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public void deleteById(String s) {
+        repository.deleteById(s);
+    }
 }
 

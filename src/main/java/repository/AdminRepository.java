@@ -13,7 +13,7 @@ public class AdminRepository implements Repository<Admin, String> {
         repository = new InMemoryRepository<>() {
             @Override
             protected String getId(Admin entity) {
-                if (entity.getId() == null){
+                if (entity.getId() == null) {
                     throw new IllegalArgumentException("Entity ID cannot be null");
                 }
                 return entity.getId();
@@ -23,9 +23,28 @@ public class AdminRepository implements Repository<Admin, String> {
         };
     }
 
-    @Override public Optional<Admin> findById(String s) { return repository.findById(s); }
-    @Override public List<Admin> findAll() { return repository.findAll(); }
-    @Override public PagedList<Admin> findAll(int page, int pageSize) { return repository.findAll(page, pageSize); }
-    @Override public Admin save(Admin entity) { return repository.save(entity); }
-    @Override public void deleteById(String s) { repository.deleteById(s); }
+    @Override
+    public Optional<Admin> findById(String s) {
+        return repository.findById(s);
+    }
+
+    @Override
+    public List<Admin> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public PagedList<Admin> findAll(int page, int pageSize) {
+        return repository.findAll(page, pageSize);
+    }
+
+    @Override
+    public Admin save(Admin entity) {
+        return repository.save(entity);
+    }
+
+    @Override
+    public void deleteById(String s) {
+        repository.deleteById(s);
+    }
 }

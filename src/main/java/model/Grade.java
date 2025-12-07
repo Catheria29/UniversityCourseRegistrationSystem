@@ -1,5 +1,8 @@
 package model;
 
+import lombok.Getter;
+
+@Getter
 public enum Grade {
     A(4.0), B(3.0), C(2.0), D(1.0), F(0.0), I(null), W(null);
 
@@ -11,10 +14,6 @@ public enum Grade {
 
     public boolean isPassing() {
         return points != null && points > 0.0;
-    }
-
-    public Double getPoints() {
-        return points;
     }
 
     public boolean isCountedInGPA() {

@@ -55,7 +55,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 conflictChecker
         );
 
-        if (result.isOk()){
+        if (result.isOk()) {
             section.getRoster().add(result.getValue());
             sectionRepo.save(section);
         }
@@ -66,7 +66,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public Result<Void> drop(String studentId, String sectionId) {
         var studentOpt = studentRepo.findById(studentId);
-        if (studentOpt.isEmpty()) return Result.fail("Student not found");
+        if (studentOpt.isEmpty()) return Result.fail("Student not found.");
         var sectionOpt = sectionRepo.findById(sectionId);
         if (sectionOpt.isEmpty()) return Result.fail("Section not found");
 

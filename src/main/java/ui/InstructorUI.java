@@ -9,6 +9,7 @@ import service.GradingService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
@@ -35,15 +36,22 @@ public class InstructorUI {
     public void showUI() {
         JFrame frame = new JFrame("Instructor Portal - " + instructor.getName());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(1000, 700);
         frame.setLayout(new BorderLayout());
 
+        // Header panel with gradient
+        JPanel headerPanel = UITheme.createHeaderPanel("Instructor Portal");
+        frame.add(headerPanel, BorderLayout.NORTH);
+
         // === TOP BUTTON PANEL ===
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 10, 10));
-        JButton listSectionsBtn = new JButton("My Sections");
-        JButton viewRosterBtn = new JButton("View Roster");
-        JButton postGradeBtn = new JButton("Post Grade");
-        JButton backBtn = new JButton("Back");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setBackground(UITheme.LIGHT_BG);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JButton listSectionsBtn = UITheme.createPrimaryButton("My Sections");
+        JButton viewRosterBtn = UITheme.createSecondaryButton("View Roster");
+        JButton postGradeBtn = UITheme.createSuccessButton("Post Grade");
+        JButton backBtn = UITheme.createDangerButton("Back");
 
         buttonPanel.add(listSectionsBtn);
         buttonPanel.add(viewRosterBtn);
@@ -53,6 +61,8 @@ public class InstructorUI {
         frame.add(buttonPanel, BorderLayout.NORTH);
 
         JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(UITheme.WHITE);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(contentPanel, BorderLayout.CENTER);
 
         // === ACTIONS ===
@@ -88,7 +98,7 @@ public class InstructorUI {
             });
         }
 
-        JTable table = new JTable(model);
+        JTable table = styleTable(new JTable(model));
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
@@ -96,7 +106,6 @@ public class InstructorUI {
 
     private void showRoster(JPanel panel) {
         panel.removeAll();
-
         String sectionId = JOptionPane.showInputDialog(panel, "Enter Section ID:");
         if (sectionId == null || sectionId.isBlank()) return;
 
@@ -121,7 +130,7 @@ public class InstructorUI {
             });
         }
 
-        JTable table = new JTable(model);
+        JTable table = styleTable(new JTable(model));
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
@@ -129,8 +138,7 @@ public class InstructorUI {
 
     private void postGrade(JPanel panel) {
         panel.removeAll();
-
-        String sectionId = JOptionPane.showInputDialog(panel, "Enter Section ID:");
+        String sectionId = JOptionPane.showInputDialog(panel, "Please Enter Section ID:");
         if (sectionId == null || sectionId.isBlank()) return;
 
         Optional<Section> sectionOpt = catalogService.getSectionById(sectionId);
@@ -156,15 +164,28 @@ public class InstructorUI {
         );
 
         if (selectedGrade != null) {
-            String error = gradingService
-                    .postGrade(instructor.getId(), sectionId, studentId, selectedGrade)
-                    .getError();
+            var result = gradingService.postGrade(instructor.getId(), sectionId, studentId, selectedGrade);
 
-            if (error != null) {
-                JOptionPane.showMessageDialog(panel, "Error: " + error);
+            if (result.getError() != null) {
+                JOptionPane.showMessageDialog(panel, "Error: " + result.getError(), "Grade Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(panel, "Grade posted successfully!");
+                JOptionPane.showMessageDialog(panel, "✓ Grade posted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         }
+    }
+
+    private JTable styleTable(JTable table) {
+        table.setFont(UITheme.REGULAR_FONT);
+        table.setRowHeight(25);
+        table.setGridColor(new Color(220, 220, 220));
+        table.setSelectionBackground(UITheme.PRIMARY_BLUE);
+        table.setSelectionForeground(UITheme.WHITE);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(UITheme.PRIMARY_BLUE);
+        header.setForeground(UITheme.WHITE);
+        header.setFont(UITheme.BUTTON_FONT);
+
+        return table;
     }
 }

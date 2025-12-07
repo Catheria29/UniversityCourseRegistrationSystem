@@ -13,12 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class GradingServiceTest {
 
     private Repository<Student, String> studentRepo;
-    private Repository<Section, String> sectionRepo;
-    private Repository<Instructor, String> instructorRepo;
     private GradingService gradingService;
 
     private Student student;
-    private Section section1, section2, section3;
 
     @BeforeEach
     void setUp() {
@@ -26,13 +23,17 @@ class GradingServiceTest {
             @Override
             protected String getId(Student entity) { return entity.getId(); }
         };
-        sectionRepo = new InMemoryRepository<>() {
+        Repository<Section, String> sectionRepo = new InMemoryRepository<>() {
             @Override
-            protected String getId(Section entity) { return entity.getId(); }
+            protected String getId(Section entity) {
+                return entity.getId();
+            }
         };
-        instructorRepo = new InMemoryRepository<>() {
+        Repository<Instructor, String> instructorRepo = new InMemoryRepository<>() {
             @Override
-            protected String getId(Instructor entity) { return entity.getId(); }
+            protected String getId(Instructor entity) {
+                return entity.getId();
+            }
         };
 
         // Create instructor
@@ -48,9 +49,9 @@ class GradingServiceTest {
         Course c2 = new Course("CS102", "Data Structures", 3);
         Course c3 = new Course("CS103", "Algorithms", 3);
 
-        section1 = new Section("SEC1", c1, "Fall2025", 30, instructor);
-        section2 = new Section("SEC2", c2, "Fall2025", 30, instructor);
-        section3 = new Section("SEC3", c3, "Fall2025", 30, instructor);
+        Section section1 = new Section("SEC1", c1, "Fall2025", 30, instructor);
+        Section section2 = new Section("SEC2", c2, "Fall2025", 30, instructor);
+        Section section3 = new Section("SEC3", c3, "Fall2025", 30, instructor);
 
         sectionRepo.save(section1);
         sectionRepo.save(section2);

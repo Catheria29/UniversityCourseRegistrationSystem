@@ -42,7 +42,9 @@ public class StudentConsole {
                 case "3" -> drop(sc);
                 case "4" -> viewSchedule(sc);
                 case "5" -> viewTranscript();
-                case "0" -> { return; }
+                case "0" -> {
+                    return;
+                }
                 default -> System.out.println("Invalid option.");
             }
         }
@@ -68,7 +70,6 @@ public class StudentConsole {
             System.out.println();
         });
     }
-
 
 
     private void enroll(Scanner sc) {

@@ -70,11 +70,13 @@ public class Student extends Person implements Payable, Gradable {
         return Result.ok(null);
     }
 
-    /** Enroll in a section with validators and enrollment repository */
+    /**
+     * Enroll in a section with validators and enrollment repository
+     */
     public Result<Enrollment> enroll(Section section, Repository<Enrollment, String> enrollmentRepo,
-                               CapacityValidator capacityValidator,
-                               PrerequisiteValidator prerequisiteValidator,
-                               ScheduleConflictChecker conflictValidator) {
+                                     CapacityValidator capacityValidator,
+                                     PrerequisiteValidator prerequisiteValidator,
+                                     ScheduleConflictChecker conflictValidator) {
 
         // Validate capacity
         Result<Void> capResult = capacityValidator.validate(section);
@@ -97,7 +99,9 @@ public class Student extends Person implements Payable, Gradable {
         return Result.ok(enrollment);
     }
 
-    /** Drop a section */
+    /**
+     * Drop a section
+     */
     public Result<Void> drop(Section section, Repository<Enrollment, String> enrollmentRepo) {
         Enrollment toRemove = currentEnrollments.stream()
                 .filter(e -> e.getSection().getId().equals(section.getId()))

@@ -1,4 +1,4 @@
-package utils;
+package model.interfaces;
 
 import model.TimeSlot;
 

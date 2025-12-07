@@ -4,7 +4,7 @@ import model.Enrollment;
 import model.Section;
 import utils.Result;
 
-public record CapacityValidator () {
+public record CapacityValidator() {
 
     public Result<Void> validate(Section section) {
 

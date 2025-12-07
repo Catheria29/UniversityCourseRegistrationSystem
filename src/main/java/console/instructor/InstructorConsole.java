@@ -35,7 +35,9 @@ public class InstructorConsole {
             switch (sc.nextLine().trim()) {
                 case "1" -> listSections();
                 case "2" -> enterGrade(sc);
-                case "0" -> { return; }
+                case "0" -> {
+                    return;
+                }
                 default -> System.out.println("Invalid option.");
             }
         }
